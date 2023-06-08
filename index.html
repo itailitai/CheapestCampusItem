@@ -101,6 +101,7 @@
     </style>
     
     <script>
+    const banned_cafeterias = ["פביולה","שפרינצק"]
            // Google Sheets document URL
     const DOCUMENT_URL = '1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY';
 
@@ -108,9 +109,10 @@ let data;
 
 // Fetch data from the Google Sheets document
 const fetchData = async () => {
-    const response = await fetch(`https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&tq&gid=0`);
+    const response = await fetch(`https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&gid=0`);
     const txt = await response.text();
     const jsonString = txt.match(/"table":.*(?=}\);)/g)[0].replace('"table":', '');
+    console.log(JSON.parse(jsonString))
     return JSON.parse(jsonString);
 }
 
@@ -155,7 +157,7 @@ const getOptions = (data, item) => {
     const itemRowIndex = data.rows.findIndex(row => row.c[itemsColumnIndex].v === item);
 
     if (itemRowIndex === -1) return [];
-
+    console.log(data.rows[itemRowIndex])
     let options = [];
     for (let i = itemsColumnIndex - 1; i >= 0; i--) {
         const cafeteria = data.cols[i].label;
@@ -166,6 +168,7 @@ const getOptions = (data, item) => {
         }
 
         const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"]/g, '').replace(/\s+/g, ' ').trim();
+        
         const numbers = value.split(/[\/\s-]+/).map(Number);
         const price = Math.min(...numbers);
 
@@ -175,18 +178,24 @@ const getOptions = (data, item) => {
     return options.sort((a, b) => a.price - b.price);
 }
 
-// Generate HTML from the options
 const generateHTML = (item, options) => {
     if (options.length === 0) {
         return `המוצר הבא לא נמצא: ${item}`;
     }
 
-    return options.map((option, index) =>
-        index === 0
-            ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${option.cafeteria} (₪${option.price})</b> <br> <br>`
-            : `${option.cafeteria} - ₪${option.price}<br>`
-    ).join('');
-}
+    return options.map((option, index) => {
+        let cafeteriaName = option.cafeteria;
+        let notice = '';
+        if (banned_cafeterias.includes(option.cafeteria)) {
+            cafeteriaName = `<span style='color: white; background: #a50b0b;'>${option.cafeteria}</span>`;
+            notice = `<span style=' color: #a50b0b;'>מוחרמת</span>`;
+        }
+
+        return index === 0
+            ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${cafeteriaName} (₪${option.price})</b> ${notice}<br> <br>`
+            : `${cafeteriaName} - ₪${option.price} ${notice}<br>`;
+    }).join('');
+};
 
 // Function to find the cheapest option for a given item
 const findOptions = () => {
