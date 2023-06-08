@@ -203,13 +203,14 @@
 </head>
 <body onload="populateItemsDatalist()">
     <h1>מציאת האופציה הזולה ביותר בקמפוס</h1>
+    <p>W.I.P, חלק מהמוצרים לא יופיעו בגלל הדרך בה המחיר כתוב במסמך</p>
     <label for="item">בחר מוצר:</label>
     <input type="text" id="item" name="item" list="items" autocomplete="off" onfocus="this.value='';">
 
     <datalist id="items">
         <!-- Options will be populated dynamically -->
     </datalist>
-    <button onclick="findOptions()">Find Options</button>
+    <button onclick="findOptions()">מצא מוצרים</button>
     <p id="result"></p>
     <div id="creator">Made by Itai L.</div>
 </body>
