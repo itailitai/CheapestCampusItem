@@ -208,12 +208,14 @@ $(document).ready(function() {
 </head>
 <body onload="populateItemsSelect()">
     <h1>מציאת האופציה הזולה ביותר בקמפוס</h1>
+    <p>יתכן ומספר מוצרים לא יעבדו בגלל הדרך בה המחיר שלהם רשום במסמך, יסודר בהמשך</p>
     <label for="item">בחר מוצר:</label>
     <select id="item" name="item">
         <!-- Options will be populated dynamically -->
     </select>
     <button onclick="findOptions()">מצא מוצרים</button>
     <p id="result"></p>
+    <a href="">המסמך ממנו האתר שואב את הנתונים</a>
     <div id='creator'>Made by Itai L.</div>
 </body>
 </html>
