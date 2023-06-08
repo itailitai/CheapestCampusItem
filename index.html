@@ -28,7 +28,7 @@
             color: #666666;
         }
 
-        select {
+        input[type="text"] {
             width: 100%;
             max-width: 360px;
             height: 30px;
@@ -60,19 +60,20 @@
             text-align: center;
         }
 
-        b{
+        b {
             font-size: 1.3em;
-    color: #1c761f;
+            color: #1c761f;
         }
 
-            #creator{
-                direction: ltr;
-                position: absolute;
-                left: 10px;
-                bottom: 5px;
-                font-size: 1em;
-                color: rgb(92, 92, 92);
-            }
+        #creator {
+            direction: ltr;
+            position: absolute;
+            left: 10px;
+            bottom: 5px;
+            font-size: 1em;
+            color: rgb(92, 92, 92);
+        }
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -86,7 +87,8 @@
                 font-size: 1em;
             }
 
-            select, button {
+            input[type="text"],
+            button {
                 font-size: 0.8em;
             }
 
@@ -97,114 +99,120 @@
     </style>
 
     <script>
-           // Google Sheets document URL
-    const DOCUMENT_URL = '1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY';
+        // Google Sheets document URL
+        const DOCUMENT_URL = '1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY';
 
-let data;
+        let data;
 
-// Fetch data from the Google Sheets document
-const fetchData = async () => {
-    const response = await fetch(`https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&tq&gid=0`);
-    const txt = await response.text();
-    const jsonString = txt.match(/(?<="table":).*(?=}\);)/g)[0];
-    return JSON.parse(jsonString);
-}
-
-// Handle error during fetching data
-const getData = async () => {
-    try {
-        return await fetchData();
-    } catch (error) {
-        console.error('Error:', error);
-        return null;
-    }
-}
-
-// Extract distinct item names from the data
-const getItemNames = (data) => {
-    const itemsColumnIndex = data.cols.length - 1;
-    return data.rows.map(row => row.c[itemsColumnIndex].v)
-        .filter((item, index, self) => self.indexOf(item) === index);
-}
-
-// Populate the items select input
-const populateItemsSelect = async () => {
-    data = await getData();
-
-    if (data) {
-        const itemNames = getItemNames(data);
-        const itemsSelect = document.getElementById('item');
-        itemsSelect.innerHTML = '';
-
-        itemNames.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item;
-            option.text = item;
-            itemsSelect.appendChild(option);
-        });
-    }
-}
-
-// Extract options from the data
-const getOptions = (data, item) => {
-    const itemsColumnIndex = data.cols.length - 1;
-    const itemRowIndex = data.rows.findIndex(row => row.c[itemsColumnIndex].v === item);
-
-    if (itemRowIndex === -1) return [];
-
-    let options = [];
-    for (let i = itemsColumnIndex - 1; i >= 0; i--) {
-        const cafeteria = data.cols[i].label;
-        const rowData = data.rows[itemRowIndex]?.c[i];
-
-        if (!rowData) {
-            continue;
+        // Fetch data from the Google Sheets document
+        const fetchData = async () => {
+            const response = await fetch(`https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&tq&gid=0`);
+            const txt = await response.text();
+            const jsonString = txt.match(/(?<="table":).*(?=}\);)/g)[0];
+            return JSON.parse(jsonString);
         }
 
-        const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"]/g, '').replace(/\s+/g, ' ').trim();
-        const numbers = value.split(/[\/\s]+/).map(Number);
-        const price = Math.min(...numbers);
+        // Handle error during fetching data
+        const getData = async () => {
+            try {
+                return await fetchData();
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
 
-        options.push({ cafeteria, price });
-    }
+        // Extract distinct item names from the data
+        const getItemNames = (data) => {
+            const itemsColumnIndex = data.cols.length - 1;
+            return data.rows.map(row => row.c[itemsColumnIndex].v)
+                .filter((item, index, self) => self.indexOf(item) === index);
+        }
 
-    return options.sort((a, b) => a.price - b.price);
-}
+        // Populate the items datalist
+        const populateItemsDatalist = async () => {
+            data = await getData();
 
-// Generate HTML from the options
-const generateHTML = (item, options) => {
-    if (options.length === 0) {
-        return `המוצר הבא לא נמצא: ${item}`;
-    }
+            if (data) {
+                const itemNames = getItemNames(data);
+                const itemsDatalist = document.getElementById('items');
+                itemsDatalist.innerHTML = '';
 
-    return options.map((option, index) =>
-        index === 0
-            ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${option.cafeteria} (₪${option.price})</b> <br> <br>`
-            : `${option.cafeteria} - ₪${option.price}<br>`
-    ).join('');
-}
+                itemNames.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    itemsDatalist.appendChild(option);
+                });
+            }
+        }
 
-// Function to find the cheapest option for a given item
-const findOptions = () => {
-    const item = document.getElementById('item').value;
+        // Extract options from the data
+        const getOptions = (data, item) => {
+            const itemsColumnIndex = data.cols.length - 1;
+            const itemRowIndex = data.rows.findIndex(row => row.c[itemsColumnIndex].v === item);
 
-    if (data) {
-        const options = getOptions(data, item);
-        const resultHTML = generateHTML(item, options);
-        document.getElementById('result').innerHTML = resultHTML;
-    }
-}
+            if (itemRowIndex === -1) return [];
 
+            let options = [];
+            for (let i = itemsColumnIndex - 1; i >= 0; i--) {
+                const cafeteria = data.cols[i].label;
+                const rowData = data.rows[itemRowIndex]?.c[i]; 
+
+                if (!rowData) {
+                    continue;
+                }
+
+                const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"]/g, '').replace(/\s+/g, ' ').trim();
+  
+                const numbers = value.split(/[\/\s]+/).map(Number);
+                const price = Math.min(...numbers);
+
+                options.push({ cafeteria, price });
+            }
+
+            return options.sort((a, b) => a.price - b.price);
+        }
+
+        // Generate HTML from the options
+        const generateHTML = (item, options) => {
+            if (options.length === 0) {
+                return `המוצר הבא לא נמצא: ${item}`;
+            }
+
+            return options.map((option, index) =>
+                index === 0
+                    ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${option.cafeteria} (₪${option.price})</b> <br> <br>`
+                    : `${option.cafeteria} - ₪${option.price}<br>`
+            ).join('');
+        }
+
+        // Function to find the cheapest option for a given item
+        const findOptions = () => {
+            const item = document.getElementById('item').value;
+
+            if (data) {
+                const options = getOptions(data, item);
+                const resultHTML = generateHTML(item, options);
+                document.getElementById('result').innerHTML = resultHTML;
+            }
+        }
+
+        // Clear the input value when clicked
+        const clearInput = () => {
+            document.getElementById('item').value = '';
+        }
     </script>
 </head>
-<body onload="populateItemsSelect()">
+<body onload="populateItemsDatalist()">
     <h1>מציאת האופציה הזולה ביותר בקמפוס</h1>
     <label for="item">בחר מוצר:</label>
-    <select id="item" name="item">
+    <input type="text" id="item" name="item" list="items" autocomplete="off" onfocus="this.value='';">
+
+    <datalist id="items">
         <!-- Options will be populated dynamically -->
-    </select>
+    </datalist>
     <button onclick="findOptions()">Find Options</button>
     <p id="result"></p>
-    <div id='creator'>Made by Itai L.</div>
+    <div id="creator">Made by Itai L.</div>
 </body>
 </html>
