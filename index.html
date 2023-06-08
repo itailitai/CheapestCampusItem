@@ -161,9 +161,7 @@
                 if (!rowData) {
                     continue;
                 }
-
-                const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"]/g, '').replace(/\s+/g, ' ').trim();
-  
+                const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"-]/g, ' ').replace(/\s+/g, ' ').trim();
                 const numbers = value.split(/[\/\s]+/).map(Number);
                 const price = Math.min(...numbers);
 
