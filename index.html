@@ -98,6 +98,7 @@
       #result {
         text-align: center;
         overflow: scroll;
+        height: 0px;
       }
 
       #total_result {
@@ -153,6 +154,12 @@
         height: 30px;
         animation: spin 1s linear infinite;
         margin-bottom: 10px;
+      }
+
+      .item-info {
+        border: 1px solid #a9a9a9;
+        padding: 5px;
+        box-shadow: 16px 4px 9px rgba(0, 0, 0, 0.2);
       }
 
       @keyframes spin {
@@ -297,22 +304,26 @@
           return `המוצר הבא לא נמצא: ${item}`;
         }
         selected_items_data[item] = {};
-        return options
-          .map((option, index) => {
-            let cafeteriaName = option.cafeteria;
-            let notice = "";
-            selected_items_data[item][option.cafeteria] = {};
-            selected_items_data[item][option.cafeteria] = option.price;
-            if (banned_cafeterias.includes(option.cafeteria)) {
-              cafeteriaName = `<span style='color: white; background: #a50b0b;'>${option.cafeteria}</span>`;
-              notice = `<span style=' color: #a50b0b;'>מוחרמת</span>`;
-            }
+        return (
+          "<div class='item-info'>" +
+          options
+            .map((option, index) => {
+              let cafeteriaName = option.cafeteria;
+              let notice = "";
+              selected_items_data[item][option.cafeteria] = {};
+              selected_items_data[item][option.cafeteria] = option.price;
+              if (banned_cafeterias.includes(option.cafeteria)) {
+                cafeteriaName = `<span style='color: white; background: #a50b0b;padding:2px;'>${option.cafeteria}</span>`;
+                notice = `<span style=' color: #a50b0b;'>מוחרמת</span>`;
+              }
 
-            return index === 0
-              ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${cafeteriaName} (₪${option.price})</b> ${notice}<br> <br>`
-              : `${cafeteriaName} - ₪${option.price} ${notice}<br>`;
-          })
-          .join("");
+              return index === 0
+                ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${cafeteriaName} (₪${option.price})</b> ${notice}<br> <br>`
+                : `${cafeteriaName} - ₪${option.price} ${notice}<br>`;
+            })
+            .join("") +
+          "</div>"
+        );
       };
 
       const getBestCafeteria = (menu) => {
@@ -368,6 +379,9 @@
 
       // Function to find the cheapest option for a given item
       const findOptions = () => {
+        var div = document.getElementById("result");
+        div.style.height = "0";
+        div.classList.add("collapsed"); 
         selected_items_data = {};
         document.getElementById("result").innerHTML = "";
         var selectedValues = Array.from(
@@ -428,10 +442,10 @@
       <div class="spinner"></div>
       <p>טוען מחירים עדכניים...</p>
     </div>
-    <select id="item" name="item" multiple="multiple">
+    <select id="item" name="item" multiple="multiple" onchange="findOptions()">
       <!-- Options will be populated dynamically -->
     </select>
-    <button onclick="findOptions()">מצא מוצרים</button>
+    <!-- <button onclick="findOptions()">מצא מוצרים</button> -->
     <div id="total_result"></div>
     <button id="collapsebutton" onclick="toggleCollapse()">
       פרט מחירים לפי מוצר
