@@ -1,230 +1,398 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Option Finder</title>
-    <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/he.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.slim.min.js"
+      integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/he.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-        html, body {
-            direction: rtl;
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+      html,
+      body {
+        direction: rtl;
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        color: #333333;
+        font-size: 2em;
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        font-size: 1.2em;
+        color: #666666;
+      }
+
+      select {
+        width: 100%;
+        max-width: 360px;
+        height: 30px;
+        font-size: 1em;
+        color: #333333;
+        padding: 5px;
+        margin-top: 5px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        font-size: 1em;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+        max-width: 360px;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      p {
+        font-size: 1em;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      b {
+        font-size: 1.3em;
+        color: #1c761f;
+      }
+
+      #creator {
+        direction: ltr;
+        position: fixed;
+        left: 10px;
+        bottom: 5px;
+        font-size: 1em;
+        color: rgb(92, 92, 92);
+      }
+
+      .collapsible {
+        overflow: hidden;
+        transition: height 0.3s ease;
+      }
+
+      .collapsed {
+        height: 0;
+      }
+
+      #result {
+        width: 600px;
+        text-align: center;
+        overflow: scroll;
+      }
+
+      #total_result {
+        border: 1px solid #9e9e9e;
+        margin-top: 10px;
+        padding: 10px;
+        box-shadow: 0px -1px 15px rgba(0, 0, 0, 0.2);
+        display: none;
+      }
+      #total_result div {
+        font-weight: bold;
+      }
+      #total_result div p {
+        font-weight: normal;
+      }
+
+      #total_result h3 {
+        color: #1c761f;
+      }
+
+      #collapsebutton {
+        display: none;
+        background-color: #191919;
+      }
+      @media (max-width: 600px) {
+        body {
+          padding: 10px;
         }
 
         h1 {
-            color: #333333;
-            font-size: 2em;
-            text-align: center;
+          font-size: 1.5em;
         }
 
         label {
-            display: block;
-            margin-top: 10px;
-            font-size: 1.2em;
-            color: #666666;
+          font-size: 1em;
         }
 
-        select {
-            width: 100%;
-            max-width: 360px;
-            height: 30px;
-            font-size: 1em;
-            color: #333333;
-            padding: 5px;
-            margin-top: 5px;
-        }
-
+        select,
         button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-            max-width: 360px;
-        }
-
-        button:hover {
-            background-color: #45a049;
+          font-size: 0.8em;
         }
 
         p {
-            font-size: 1em;
-            margin-top: 10px;
-            text-align: center;
+          font-size: 0.8em;
         }
-
-        b{
-            font-size: 1.3em;
-    color: #1c761f;
-        }
-
-            #creator{
-                direction: ltr;
-                position: absolute;
-                left: 10px;
-                bottom: 5px;
-                font-size: 1em;
-                color: rgb(92, 92, 92);
-            }
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-            }
-
-            label {
-                font-size: 1em;
-            }
-
-            select, button {
-                font-size: 0.8em;
-            }
-
-            p {
-                font-size: 0.8em;
-            }
-        }
+      }
     </style>
-    
+
     <script>
-    const banned_cafeterias = ["פביולה","שפרינצק"]
-           // Google Sheets document URL
-    const DOCUMENT_URL = '1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY';
+      const banned_cafeterias = ["פביולה", "שפרינצק"];
+      // Google Sheets document URL
+      const DOCUMENT_URL = "1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY";
 
-let data;
+      let data;
+      let selected_items_data = {};
 
-// Fetch data from the Google Sheets document
-const fetchData = async () => {
-    const response = await fetch(`https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&gid=0`);
-    const txt = await response.text();
-    const jsonString = txt.match(/"table":.*(?=}\);)/g)[0].replace('"table":', '');
-    console.log(JSON.parse(jsonString))
-    return JSON.parse(jsonString);
-}
+      const toggleCollapse = () => {
+        var div = document.getElementById("result");
+        if (div.classList.contains("collapsed")) {
+          div.classList.remove("collapsed");
+          div.style.height = div.scrollHeight + 30 + "px";
+        } else {
+          div.style.height = "0";
+          div.classList.add("collapsed");
+        }
+      };
 
-// Handle error during fetching data
-const getData = async () => {
-    try {
-        return await fetchData();
-    } catch (error) {
-        console.error('Error:', error);
-        return null;
-    }
-}
+      // Fetch data from the Google Sheets document
+      const fetchData = async () => {
+        const response = await fetch(
+          `https://docs.google.com/spreadsheets/d/${DOCUMENT_URL}/gviz/tq?tqx=out:json&gid=0`
+        );
+        const txt = await response.text();
+        const jsonString = txt
+          .match(/"table":.*(?=}\);)/g)[0]
+          .replace('"table":', "");
+        console.log(JSON.parse(jsonString));
+        return JSON.parse(jsonString);
+      };
 
-// Extract distinct item names from the data
-const getItemNames = (data) => {
-    const itemsColumnIndex = data.cols.length - 1;
-    return data.rows.map(row => row.c[itemsColumnIndex].v)
-        .filter((item, index, self) => self.indexOf(item) === index);
-}
+      // Handle error during fetching data
+      const getData = async () => {
+        try {
+          return await fetchData();
+        } catch (error) {
+          console.error("Error:", error);
+          return null;
+        }
+      };
 
-// Populate the items select input
-const populateItemsSelect = async () => {
-    data = await getData();
+      // Extract distinct item names from the data
+      const getItemNames = (data) => {
+        const itemsColumnIndex = data.cols.length - 1;
+        return data.rows
+          .map((row) => row.c[itemsColumnIndex].v)
+          .filter((item, index, self) => self.indexOf(item) === index);
+      };
 
-    if (data) {
-        const itemNames = getItemNames(data);
-        const itemsSelect = document.getElementById('item');
-        itemsSelect.innerHTML = '';
+      // Populate the items select input
+      const populateItemsSelect = async () => {
+        data = await getData();
 
-        itemNames.forEach(item => {
-            const option = document.createElement('option');
+        if (data) {
+          const itemNames = getItemNames(data);
+          const itemsSelect = document.getElementById("item");
+          itemsSelect.innerHTML = "";
+
+          itemNames.forEach((item) => {
+            const option = document.createElement("option");
             option.value = item;
             option.text = item;
             itemsSelect.appendChild(option);
-        });
-    }
-}
+          });
+        }
+      };
 
-// Extract options from the data
-const getOptions = (data, item) => {
-    const itemsColumnIndex = data.cols.length - 1;
-    const itemRowIndex = data.rows.findIndex(row => row.c[itemsColumnIndex].v === item);
+      // Extract options from the data
+      const getOptions = (data, item) => {
+        const itemsColumnIndex = data.cols.length - 1;
+        const itemRowIndex = data.rows.findIndex(
+          (row) => row.c[itemsColumnIndex].v === item
+        );
 
-    if (itemRowIndex === -1) return [];
-    console.log(data.rows[itemRowIndex])
-    let options = [];
-    for (let i = itemsColumnIndex - 1; i >= 0; i--) {
-        const cafeteria = data.cols[i].label;
-        const rowData = data.rows[itemRowIndex]?.c[i];
+        if (itemRowIndex === -1) return [];
+        console.log(data.rows[itemRowIndex]);
+        let options = [];
+        for (let i = itemsColumnIndex - 1; i >= 0; i--) {
+          const cafeteria = data.cols[i].label;
+          const rowData = data.rows[itemRowIndex]?.c[i];
 
-        if (!rowData) {
+          if (!rowData) {
             continue;
+          }
+
+          const value = String(rowData?.f ?? rowData?.v)
+            .replace(/[\u0590-\u05FFa-zA-Z"]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+          const numbers = value.split(/[\/\s-]+/).map(Number);
+          const price = Math.min(...numbers);
+
+          options.push({ cafeteria, price });
         }
 
-        const value = String(rowData?.f ?? rowData?.v).replace(/[\u0590-\u05FFa-zA-Z"]/g, '').replace(/\s+/g, ' ').trim();
-        
-        const numbers = value.split(/[\/\s-]+/).map(Number);
-        const price = Math.min(...numbers);
+        return options.sort((a, b) => a.price - b.price);
+      };
 
-        options.push({ cafeteria, price });
-    }
+      const generateHTML = (item, options) => {
+        if (options.length === 0) {
+          return `המוצר הבא לא נמצא: ${item}`;
+        }
+        selected_items_data[item] = {};
+        return options
+          .map((option, index) => {
+            let cafeteriaName = option.cafeteria;
+            let notice = "";
+            selected_items_data[item][option.cafeteria] = {};
+            selected_items_data[item][option.cafeteria] = option.price;
+            if (banned_cafeterias.includes(option.cafeteria)) {
+              cafeteriaName = `<span style='color: white; background: #a50b0b;'>${option.cafeteria}</span>`;
+              notice = `<span style=' color: #a50b0b;'>מוחרמת</span>`;
+            }
 
-    return options.sort((a, b) => a.price - b.price);
-}
+            return index === 0
+              ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${cafeteriaName} (₪${option.price})</b> ${notice}<br> <br>`
+              : `${cafeteriaName} - ₪${option.price} ${notice}<br>`;
+          })
+          .join("");
+      };
 
-const generateHTML = (item, options) => {
-    if (options.length === 0) {
-        return `המוצר הבא לא נמצא: ${item}`;
-    }
+      const getBestCafeteria = (menu) => {
+        let totals = {};
+        let minPrice = Infinity;
+        let bestCafeteria = null;
 
-    return options.map((option, index) => {
-        let cafeteriaName = option.cafeteria;
-        let notice = '';
-        if (banned_cafeterias.includes(option.cafeteria)) {
-            cafeteriaName = `<span style='color: white; background: #a50b0b;'>${option.cafeteria}</span>`;
-            notice = `<span style=' color: #a50b0b;'>מוחרמת</span>`;
+        const allItems = Object.keys(menu);
+
+        // Calculate the totals and track the cafeteria with the minimum total
+        for (let item in menu) {
+          for (let cafeteria in menu[item]) {
+            // Initialize cafeteria in totals if not done yet
+            if (!totals[cafeteria]) {
+              totals[cafeteria] = { total: 0, itemCount: 0 };
+            }
+
+            // Add price to total and increment item count
+            totals[cafeteria].total += menu[item][cafeteria];
+            totals[cafeteria].itemCount++;
+
+            // If this cafeteria has all items and its total is less than minPrice
+            if (
+              totals[cafeteria].itemCount === allItems.length &&
+              totals[cafeteria].total < minPrice
+            ) {
+              minPrice = totals[cafeteria].total;
+              bestCafeteria = cafeteria;
+            }
+          }
         }
 
-        return index === 0
-            ? `<b style='color:black;font-size:1.1em'>האופציה הזולה ביותר עבור ${item}:</b> <b> ${cafeteriaName} (₪${option.price})</b> ${notice}<br> <br>`
-            : `${cafeteriaName} - ₪${option.price} ${notice}<br>`;
-    }).join('');
-};
+        // Prepare the output array with best cafeteria as the first element
+        let result = bestCafeteria
+          ? [{ cafeteria: bestCafeteria, total: minPrice }]
+          : [];
 
-// Function to find the cheapest option for a given item
-const findOptions = () => {
-    const item = document.getElementById('item').value;
+        // Add the rest of the cafeterias that have all items
+        for (let cafeteria in totals) {
+          if (
+            cafeteria !== bestCafeteria &&
+            totals[cafeteria].itemCount === allItems.length
+          ) {
+            result.push({
+              cafeteria: cafeteria,
+              total: totals[cafeteria].total,
+            });
+          }
+        }
 
-    if (data) {
-        const options = getOptions(data, item);
-        const resultHTML = generateHTML(item, options);
-        document.getElementById('result').innerHTML = resultHTML;
-    }
-}
-$(document).ready(function() {
-    $('#item').select2({
-  dir: "rtl",
-  language: "he"
-});
-});
+        return result;
+      };
+
+      // Function to find the cheapest option for a given item
+      const findOptions = () => {
+        document.getElementById("result").innerHTML = "";
+        var selectedValues = Array.from(
+          document.getElementById("item").selectedOptions
+        ).map((option) => option.value);
+
+        for (let index = 0; index < selectedValues.length; index++) {
+          if (data) {
+            const item = selectedValues[index];
+            const options = getOptions(data, item);
+            const resultHTML = generateHTML(item, options);
+            document.getElementById("result").innerHTML += "<br>" + resultHTML;
+          }
+        }
+        document.getElementById("collapsebutton").style.display = "block";
+
+        let cafeterias = getBestCafeteria(selected_items_data);
+
+        let totalResultDiv = document.getElementById("total_result");
+        totalResultDiv.innerHTML = "";
+        totalResultDiv.style.display = "block";
+        // Clear the existing content
+        totalResultDiv.innerHTML = "<p>מראה קפטריות עם כל המוצרים שנבחרו:</p>";
+
+        // Add the cheapest cafeteria
+        let bestCafeteriaP = document.createElement("h3");
+        bestCafeteriaP.textContent = `הקפטריה הזולה ביותר: ${cafeterias[0].cafeteria} - ${cafeterias[0].total} ש"ח`;
+        totalResultDiv.appendChild(bestCafeteriaP);
+
+        // Add the remaining options
+        let otherCafeteriasDiv = document.createElement("div");
+        otherCafeteriasDiv.style.textAlign = "center";
+        otherCafeteriasDiv.textContent = "אפשרויות אחרות:";
+        totalResultDiv.appendChild(otherCafeteriasDiv);
+
+        for (let i = 1; i < cafeterias.length; i++) {
+          let cafeteriaP = document.createElement("p");
+          cafeteriaP.textContent = `${cafeterias[i].cafeteria} - ${cafeterias[i].total} ש"ח`;
+          otherCafeteriasDiv.appendChild(cafeteriaP);
+        }
+      };
+      $(document).ready(function () {
+        $("#item").select2({
+          dir: "rtl",
+          language: "he",
+        });
+      });
     </script>
-</head>
-<body onload="populateItemsSelect()">
+  </head>
+  <body onload="populateItemsSelect()">
     <h1>מציאת האופציה הזולה ביותר בקמפוס</h1>
-    <p>יתכן ומספר מוצרים לא יעבדו בגלל הדרך בה המחיר שלהם רשום במסמך, יסודר בהמשך</p>
-    <label for="item">בחר מוצר:</label>
-    <select id="item" name="item">
-        <!-- Options will be populated dynamically -->
+    <p>
+      יתכן ומספר מוצרים לא יעבדו בגלל הדרך בה המחיר שלהם רשום במסמך, יסודר בהמשך
+    </p>
+    <h3 style="color: purple">
+      חדש: בחרו מספר מוצרים כדי למצוא את המקום הכי משתלם
+    </h3>
+    <label for="item">בחר/י מוצר/ים:</label>
+    <select id="item" name="item" multiple="multiple">
+      <!-- Options will be populated dynamically -->
     </select>
     <button onclick="findOptions()">מצא מוצרים</button>
-    <p id="result"></p>
-    <a href="https://docs.google.com/spreadsheets/d/1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY/edit#gid=0">המסמך ממנו האתר שואב את הנתונים</a>
-    <div id='creator'>Made by Itai L.</div>
-</body>
+    <div id="total_result"></div>
+    <button id="collapsebutton" onclick="toggleCollapse()">
+      פרט מחירים לפי מוצר
+    </button>
+    <div id="result" class="collapsible collapsed"></div>
+    <a
+      href="https://docs.google.com/spreadsheets/d/1TvwY0_BjVmWfKfTCZ_nUjWLvLRgv7npurCEamJIsHHY/edit#gid=0"
+      >המסמך ממנו האתר שואב את הנתונים</a
+    >
+    <div id="creator">Made by Itai L.</div>
+  </body>
 </html>
